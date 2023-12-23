@@ -34,7 +34,6 @@ router.post("/register", async (req, res) => {
       name: fullname,
     });
 
-    console.log(user);
 
     userModel.register(user, req.body.password, (err) => {
       if (err) {
@@ -46,7 +45,6 @@ router.post("/register", async (req, res) => {
         const user = await userModel.findOne({
           username: req.session.passport.user,
         });
-        console.log(user);
 
         res.render("profile", { footer: true, user });
       });
@@ -60,7 +58,6 @@ router.post("/register", async (req, res) => {
 // profile Route
 router.get("/profile", isLoggedIn, async (req, res) => {
   const user = await userModel.findOne({ username: req.session.passport.user }).populate("posts")
-  console.log(user);
   res.render("profile", { footer: true, user });
 });
 
@@ -108,8 +105,9 @@ router.post(
 
 // FEED ROUTE
 router.get("/feed", isLoggedIn, async(req, res) => {
+  const user = await userModel.findOne({username : req.session.passport.user})
   const posts = await postModel.find().populate("user")
-  res.render("feed", { footer: true , posts });
+  res.render("feed", { footer: true , posts , user });
 });
 
 // UPLOAD ROUTE
@@ -145,6 +143,36 @@ router.post("/upload", upload.single("uploadImage"), async (req, res, next) => {
 // search route
 router.get('/search' ,(req,res)=>{
 res.render('search' , {footer:true})
+})
+
+router.get('/username/:name' ,async(req,res)=>{
+  const regex = new RegExp(`^${req.params.name}`, 'i')
+const users = await userModel.find({username : regex})
+console.log(regex);
+console.log(users);
+res.json(users)
+})
+
+
+
+
+// Like route
+router.get('/like/post/:id', async(req,res)=>{
+  const user = await userModel.findOne({username : req.session.passport.user})
+  const post = await postModel.findOne({_id : req.params.id})
+
+  // if already liked then remove the like
+  if(post.likes.indexOf(user._id)===-1){
+    post.likes.push(user._id)
+  }else{
+    post.likes.splice(post.likes.indexOf(user.id),1)
+  }
+
+  await post.save()
+  res.redirect('/feed')
+
+  
+  
 })
 
 module.exports = router;
