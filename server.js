@@ -1,8 +1,10 @@
+require('dotenv').config()
+
 const app = require('./app')
 const mongoose = require('mongoose')
 
 
-mongoose.connect('mongodb://127.0.0.1/instagram')
+mongoose.connect(process.env.MONGO_URL)
 .then(()=>{
     console.log("DB is connected");
 })
