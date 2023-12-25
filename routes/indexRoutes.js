@@ -38,7 +38,7 @@ router.post("/register", async (req, res) => {
     userModel.register(user, req.body.password, (err) => {
       if (err) {
         console.log(err);
-        return res.send("Error during registration");
+        return res.send(err);
       }
 
       passport.authenticate("local")(req, res, async function () {
