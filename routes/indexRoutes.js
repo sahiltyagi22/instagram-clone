@@ -118,7 +118,9 @@ router.get("/upload", isLoggedIn, (req, res) => {
 router.post("/upload", upload.single("uploadImage"), async (req, res, next) => {
   try {
     if (!req.file) {
+      res.send(`No file selected <a href = '/upload'>back</a>` )
       throw new Error("No file uploaded.");
+      
     }
 
     const user = await userModel.findOne({
