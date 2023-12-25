@@ -11,6 +11,8 @@ const expressSession = require('express-session')
 const userModel = require('./models/userModel')
 const indexRoutes = require('./routes/indexRoutes')
 
+const uri = process.env.MONGO_URL
+
 
 
 app.set('view engine' , 'ejs')
@@ -19,13 +21,15 @@ app.use(express.json())
 
 app.use(express.static(path.join(__dirname , 'public')))
 
-app.use(
-    expressSession({
-      resave: false,
-      saveUninitialized: false,
-      secret: "this is a secret",
-    })
-  );
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  store: new MongoStore({
+    url: uri
+  }),
+  cookie: { maxAge: 600000 } 
+}));
   
   app.use(passport.initialize());
   app.use(passport.session());
