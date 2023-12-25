@@ -36,10 +36,10 @@ router.post("/register", async (req, res) => {
 
 
     userModel.register(user, req.body.password, (err) => {
-      if (err) {
-        console.log(err);
-        return res.send(err);
-      }
+      // if (err) {
+      //   console.log(err);
+      //   return res.send(err.message);
+      // }
 
       passport.authenticate("local")(req, res, async function () {
         const user = await userModel.findOne({
@@ -51,7 +51,7 @@ router.post("/register", async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.send("error");
+    res.send(error.message);
   }
 });
 
