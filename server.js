@@ -4,7 +4,9 @@ const app = require('./app')
 const mongoose = require('mongoose')
 
 
-mongoose.connect(process.env.MONGO_URL)
+const uri = process.env.MONGO_URL
+
+mongoose.connect(uri)
 .then(()=>{
     console.log("DB is connected");
 })
